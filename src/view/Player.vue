@@ -28,7 +28,7 @@
               <div class="cd-wrapper" :class="cdClass" ref="cdWrapper">
                 <img :src="currentSong.image"/>
               </div>
-              <div v-if="currentLyric&&currentLyric.lines.length" class="song-info">{{currentLyric.lines[currentLine].txt}}</div>
+              <div v-if="currentLyric" class="song-info">{{lyricShortCut}}</div>
             </div>
           </swiper-slide>
           <swiper-slide>
@@ -94,8 +94,8 @@
         <div  class="play-list-wrapper">
           <div class="header">
             <i :class="modeIcon" class="icon-mode" @click.stop="changeMode"></i>
-            <span class="mode-name">{{modeName}}</span>
-            <i class="icon-clear"></i>
+            <span @click.stop class="mode-name">{{modeName}}</span>
+            <!-- <i class="icon-clear"></i> -->
           </div>
           <div class="list">
             <Scroll ref="songList" class="song-list">
@@ -170,6 +170,9 @@ export default {
       "mode",
       "favoriteList"
     ]),
+    lyricShortCut () {
+      return this.currentLyric.lines[this.currentLine] && this.currentLyric.lines[this.currentLine].txt
+    },
     progressRect() {
       return this.$refs.progressBar.getBoundingClientRect();
     },
@@ -207,10 +210,9 @@ export default {
     ...mapActions(["changeMode", "toggleFavorite","deleteSongFromPlayList"]),
     togglePlayList () {
       this.showPlayList = !this.showPlayList
-      setTimeout(() => {
-        console.log('fresh')
+      this.$nextTick(() => {
         this.$refs.songList.scroll.refresh()
-      },17)
+      })
     },
     isFavorite (song) {
       return this.favoriteList.findIndex(item => item.id === song.id) > -1
@@ -394,6 +396,12 @@ export default {
     currentSong() {
       this.$nextTick(() => {
         this.$refs.audio[this.playing ? "play" : "pause"]()
+        if (this.currentLyric) {
+          this.currentLyric.stop()
+          // 重置为null
+          this.currentLyric = null
+          this.currentLine = 0
+        }
         this.getLyric()
       });
     }
@@ -409,6 +417,9 @@ export default {
   p
     height: 3.2rem;
     line-height: 3.2rem;
+    white-space nowrap
+    overflow hidden
+    text-overflow ellipsis
     font-size: $font-size-primary
     &.play-line
       color $font-color-title
