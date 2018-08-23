@@ -224,7 +224,6 @@ export default {
       });
     },
     handleLyric ({lineNum, txt}) {
-      console.log(lineNum)
       this.currentLine = lineNum
       const lyricList = this.$refs.lyricList
       if (lineNum > 5) {
