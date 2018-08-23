@@ -110,14 +110,14 @@
                 </li>
               </ul>
             </Scroll>
-            <div class="add-song">
+            <!-- <div class="add-song">
               <div class="add-btn">
                 <div class="add-icon-wrapper">
                   <i class="icon-add"></i>
                 </div>
                 <span>添加歌曲到队列</span>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="close" @click.stop="togglePlayList">关闭</div>
         </div>
@@ -275,8 +275,11 @@ export default {
     },
     changeProgress(touchX) {
       const clickX = touchX - this.progressRect.x;
-      this.$refs.audio.currentTime =
-        clickX / this.progressRect.width * this.currentSong.duration;
+      this.currentTime = clickX / this.progressRect.width * this.currentSong.duration
+      this.$refs.audio.currentTime = this.currentTime
+      if (this.currentLyric && this.currentLyric.lines) {
+        this.currentLyric.seek(this.currentTime * 1000)
+      }
     },
     miniScreen(bol) {
       this.setFullScreen(!bol);
@@ -359,6 +362,9 @@ export default {
         audio.play();
         this.setPlayStatus(true);
       }
+      if (this.currentLyric) {
+        this.currentLyric.togglePlay()
+      }
     },
     updateTime(e) {
       if (this.touching) {
@@ -390,6 +396,9 @@ export default {
       this.$refs.audio.currentTime = 0;
       this.$refs.audio.play();
       this.setPlayingState(true);
+      if (this.currentLyric) {
+        this.currentLyric.seek(0)
+      }
     }
   },
   watch: {
@@ -414,6 +423,7 @@ export default {
 .lyric 
   text-align: center;
   color: $font-color-content;
+  padding 0 2rem
   p
     height: 3.2rem;
     line-height: 3.2rem;
@@ -734,6 +744,7 @@ export default {
       color hsla(0,0%,100%,.3)
       font-size 1.4rem
   .list
+    padding-bottom 2rem
     .song-list
       max-height 24rem
       overflow hidden
@@ -755,7 +766,7 @@ export default {
     .add-song
       display flex
       justify-content center
-      margin 2rem 0 3rem
+      margin-top 2rem
       .add-btn
         display flex
         height 3rem

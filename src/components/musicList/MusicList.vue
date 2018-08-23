@@ -20,8 +20,11 @@
     <Scroll @scroll="scroll" :probeType="3" :listenScroll="true" class="list" ref="list">
       <ul class="list-wrapper">
         <li @click="_selectPlay(item,index)" v-for="(item,index) in songs" :key="index">
-          <div class="title">{{item.name}}</div>
-          <div class="sub">{{title + '-' + item.album}}</div>
+          <div v-if="rank" class="rank">{{index+1}}</div>
+          <div class="info">
+            <div class="title">{{item.name}}</div>
+            <div class="sub">{{title + '-' + item.album}}</div>
+          </div>
         </li>
       </ul>
       <div v-show="!songs.length" class="loading-container">
@@ -41,7 +44,11 @@ export default {
   props: {
     songs: Array,
     title: String,
-    avatar: String
+    avatar: String,
+    rank:{
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -189,16 +196,24 @@ export default {
     .list-wrapper
       li
         display flex
-        flex-direction column
-        justify-content center
         min-height 6.4rem
         box-sizing border-box
-        padding 1rem 0
-        .title
-          color $font-color-title
-          margin-bottom 1rem
-        .sub
-          color $font-color-content
+        align-items center
+        .rank
+          font-size 1.8rem
+          margin-right 3rem
+          color $font-color-active
+        .info
+          display flex
+          flex-direction column
+          justify-content center
+          box-sizing border-box
+          padding 1rem 0
+          .title
+            color $font-color-title
+            margin-bottom 1rem
+          .sub
+            color $font-color-content
   .bg-layer
     position relative
     height 100%

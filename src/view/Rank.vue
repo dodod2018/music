@@ -8,7 +8,7 @@
             </div>
             <div class="right">
               <p v-for="(song,index) in item.songList" :key="index">
-                <span class="index">{{index}}</span>
+                <span class="index">{{index+1}}</span>
                 <span class="content">{{song.songname + '-' +song.singername}}</span>
               </p>
             </div>
