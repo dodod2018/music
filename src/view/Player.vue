@@ -676,6 +676,10 @@ export default {
     .title {
       color: $font-color-title;
       margin-bottom: 1rem;
+      white-space nowrap
+      overflow hidden
+      text-overflow ellipsis
+      max-width 15.6rem
     }
 
     .singer {

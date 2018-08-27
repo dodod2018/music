@@ -109,6 +109,27 @@ const actions = {
     let ary = [].concat(state.playList)
     ary.splice(index,1)
     commit('savePlayList',ary)
+  },
+  insertSong ({commit,state},song) {
+    let playList = state.playList.slice()
+    let sequenceList = state.sequenceList.slice()
+    let currentIndex = state.currentIndex
+    //播放列表是否有这首歌
+    let songIndex = playList.findIndex(item => item.id === song.id)
+    if (songIndex > -1) {
+      //如果存在，就INDEX到这首歌，直接播放
+      commit('setCurrentIndex',songIndex)
+    } else {
+      //不存在,push到当前列表,index设为最后一位
+      playList.push(song)
+      sequenceList.push(song)
+      currentIndex = playList.length - 1
+      commit('setCurrentIndex',playList.length - 1)
+      commit('setPlayList',playList)
+      commit('setSequenceList',sequenceList)
+    }
+    commit('setFullScreen',true)
+    commit('setPlayStatus',true)
   }
 }
 
