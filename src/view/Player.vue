@@ -137,7 +137,7 @@ import animations from "create-keyframe-animation";
 import { prefixStyle } from "../common/js/dom";
 import ProgressCircle from "../components/progressCircle/ProgressCircle";
 import { playMode } from "../store/config";
-import Lyric from 'lyric-parser'
+import Lyric from "lyric-parser";
 
 const transform = prefixStyle("transform");
 const transitionDuration = prefixStyle("transitionDuration");
@@ -170,8 +170,11 @@ export default {
       "mode",
       "favoriteList"
     ]),
-    lyricShortCut () {
-      return this.currentLyric.lines[this.currentLine] && this.currentLyric.lines[this.currentLine].txt
+    lyricShortCut() {
+      return (
+        this.currentLyric.lines[this.currentLine] &&
+        this.currentLyric.lines[this.currentLine].txt
+      );
     },
     progressRect() {
       return this.$refs.progressBar.getBoundingClientRect();
@@ -193,12 +196,14 @@ export default {
         ? "icon-random"
         : this.mode == playMode.sequence ? "icon-sequence" : "icon-loop";
     },
-    modeName () {
-      return this.mode === playMode.random ? '随机播放' : this.mode === playMode.sequence ? '顺序播放' : '单曲循环'
+    modeName() {
+      return this.mode === playMode.random
+        ? "随机播放"
+        : this.mode === playMode.sequence ? "顺序播放" : "单曲循环";
     },
     favoriteIcon() {
       return this.favoriteList.findIndex(
-        item => item.id === (this.currentSong).id
+        item => item.id === this.currentSong.id
       ) > -1
         ? "icon-favorite"
         : "icon-not-favorite";
@@ -207,34 +212,34 @@ export default {
   mounted() {},
   methods: {
     ...mapMutations(["setFullScreen", "setPlayStatus", "setCurrentIndex"]),
-    ...mapActions(["changeMode", "toggleFavorite","deleteSongFromPlayList"]),
-    togglePlayList () {
-      this.showPlayList = !this.showPlayList
+    ...mapActions(["changeMode", "toggleFavorite", "deleteSongFromPlayList"]),
+    togglePlayList() {
+      this.showPlayList = !this.showPlayList;
       this.$nextTick(() => {
-        this.$refs.songList.scroll.refresh()
-      })
+        this.$refs.songList.scroll.refresh();
+      });
     },
-    isFavorite (song) {
-      return this.favoriteList.findIndex(item => item.id === song.id) > -1
+    isFavorite(song) {
+      return this.favoriteList.findIndex(item => item.id === song.id) > -1;
     },
     getLyric() {
       this.currentSong.getLyric().then(res => {
-        this.currentLyric = new Lyric(res,this.handleLyric)
-        this.currentLyric.play()
+        this.currentLyric = new Lyric(res, this.handleLyric);
+        this.currentLyric.play();
       });
     },
-    handleLyric ({lineNum, txt}) {
-      this.currentLine = lineNum
-      const lyricList = this.$refs.lyricList
+    handleLyric({ lineNum, txt }) {
+      this.currentLine = lineNum;
+      const lyricList = this.$refs.lyricList;
       if (lineNum > 5) {
-        const el = this.$refs.lyricLine[lineNum-5]
-        lyricList.scroll.scrollToElement(el,1000)
+        const el = this.$refs.lyricLine[lineNum - 5];
+        lyricList.scroll.scrollToElement(el, 1000);
       } else {
-        lyricList.scroll.scrollTo(0,0,0)
+        lyricList.scroll.scrollTo(0, 0, 0);
       }
     },
-    deleteSong (song) {
-      this.deleteSongFromPlayList(song)
+    deleteSong(song) {
+      this.deleteSongFromPlayList(song);
     },
     _toggleFavorite(song) {
       this.toggleFavorite(song || this.currentSong);
@@ -274,10 +279,11 @@ export default {
     },
     changeProgress(touchX) {
       const clickX = touchX - this.progressRect.x;
-      this.currentTime = clickX / this.progressRect.width * this.currentSong.duration
-      this.$refs.audio.currentTime = this.currentTime
+      this.currentTime =
+        clickX / this.progressRect.width * this.currentSong.duration;
+      this.$refs.audio.currentTime = this.currentTime;
       if (this.currentLyric && this.currentLyric.lines) {
-        this.currentLyric.seek(this.currentTime * 1000)
+        this.currentLyric.seek(this.currentTime * 1000);
       }
     },
     miniScreen(bol) {
@@ -298,8 +304,8 @@ export default {
         scale
       };
     },
-    changePlayListSong (index) {
-      this.setCurrentIndex(index)
+    changePlayListSong(index) {
+      this.setCurrentIndex(index);
     },
     changeSong(style) {
       //prev  next
@@ -362,7 +368,7 @@ export default {
         this.setPlayStatus(true);
       }
       if (this.currentLyric) {
-        this.currentLyric.togglePlay()
+        this.currentLyric.togglePlay();
       }
     },
     updateTime(e) {
@@ -396,21 +402,21 @@ export default {
       this.$refs.audio.play();
       this.setPlayingState(true);
       if (this.currentLyric) {
-        this.currentLyric.seek(0)
+        this.currentLyric.seek(0);
       }
     }
   },
   watch: {
     currentSong() {
       this.$nextTick(() => {
-        this.$refs.audio[this.playing ? "play" : "pause"]()
+        this.$refs.audio[this.playing ? "play" : "pause"]();
         if (this.currentLyric) {
-          this.currentLyric.stop()
+          this.currentLyric.stop();
           // 重置为null
-          this.currentLyric = null
-          this.currentLine = 0
+          this.currentLyric = null;
+          this.currentLine = 0;
         }
-        this.getLyric()
+        this.getLyric();
       });
     }
   }
@@ -419,19 +425,25 @@ export default {
 <style lang="stylus" scoped>
 @import '~styles/variables.styl';
 
-.lyric 
+.lyric {
   text-align: center;
   color: $font-color-content;
-  padding 0 2rem
-  p
+  padding: 0 2rem;
+
+  p {
     height: 3.2rem;
     line-height: 3.2rem;
-    white-space nowrap
-    overflow hidden
-    text-overflow ellipsis
-    font-size: $font-size-primary
-    &.play-line
-      color $font-color-title
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: $font-size-primary;
+
+    &.play-line {
+      color: $font-color-title;
+    }
+  }
+}
+
 .scroll {
   position: absolute;
   left: 0;
@@ -493,7 +505,6 @@ export default {
             width: 4.4rem;
             text-align: center;
             transform: rotate(-90deg);
-
             .icon-back {
               font-size: 2.2rem;
               color: $font-color-active;
@@ -627,8 +638,6 @@ export default {
           flex: 1;
         }
 
-        
-
         .play-btn {
           font-size: 4rem;
         }
@@ -676,10 +685,10 @@ export default {
     .title {
       color: $font-color-title;
       margin-bottom: 1rem;
-      white-space nowrap
-      overflow hidden
-      text-overflow ellipsis
-      max-width 15.6rem
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 15.6rem;
     }
 
     .singer {
@@ -714,83 +723,119 @@ export default {
   }
 }
 
-//播放列表
-.play-list-page
-  position fixed
-  top 0
-  bottom 0
-  left 0
-  right 0
-  z-index 1
+// 播放列表
+.play-list-page {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+}
 
-.play-list-wrapper
-  position absolute
-  z-index 1
-  bottom 0
-  left 0
-  right 0
-  background-color #333
-  color $font-color-content
-  i
-    color $font-color-active
-  .header
-    display flex
-    align-items center 
-    height 3rem
-    padding 2rem
-    .icon-mode
-      font-size 3rem
-      margin-right 1rem
-    .mode-name
-      flex 1
-    .icon-clear
-      color hsla(0,0%,100%,.3)
-      font-size 1.4rem
-  .list
-    padding-bottom 2rem
-    .song-list
-      max-height 24rem
-      overflow hidden
-      li
-        display flex
-        align-items center
-        height 4rem
-        padding 0 2rem
-        .currentsong-icon
-          width 2rem
-          .icon-play
-            font-size 1.2rem
-        .song-name
-          flex 1
-        i
-          font-size 1.2rem
-          width 3.2rem
-          text-align center
-    .add-song
-      display flex
-      justify-content center
-      margin-top 2rem
-      .add-btn
-        display flex
-        height 3rem
-        line-height 3rem
-        border-radius 2rem
-        justify-content space-between
-        border 1px solid $font-color-content
-        padding 0 2rem
-        .add-icon-wrapper
-          .icon-add
-            color hsla(0,0%,100%,.5)
-  .close
-    background-color #222
-    color $font-color-content
-    height 5rem
-    line-height 5rem
-    text-align center
-    font-size 1.8rem
+.play-list-wrapper {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #333;
+  color: $font-color-content;
 
-.icon-favorite
-  color: #d93f30 !important
+  i {
+    color: $font-color-active;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    height: 3rem;
+    padding: 2rem;
+
+    .icon-mode {
+      font-size: 3rem;
+      margin-right: 1rem;
+    }
+
+    .mode-name {
+      flex: 1;
+    }
+
+    .icon-clear {
+      color: hsla(0, 0%, 100%, 0.3);
+      font-size: 1.4rem;
+    }
+  }
+
+  .list {
+    padding-bottom: 2rem;
+
+    .song-list {
+      max-height: 24rem;
+      overflow: hidden;
+
+      li {
+        display: flex;
+        align-items: center;
+        height: 4rem;
+        padding: 0 2rem;
+
+        .currentsong-icon {
+          width: 2rem;
+
+          .icon-play {
+            font-size: 1.2rem;
+          }
+        }
+
+        .song-name {
+          flex: 1;
+        }
+
+        i {
+          font-size: 1.2rem;
+          width: 3.2rem;
+          text-align: center;
+        }
+      }
+    }
+
+    .add-song {
+      display: flex;
+      justify-content: center;
+      margin-top: 2rem;
+
+      .add-btn {
+        display: flex;
+        height: 3rem;
+        line-height: 3rem;
+        border-radius: 2rem;
+        justify-content: space-between;
+        border: 1px solid $font-color-content;
+        padding: 0 2rem;
+
+        .add-icon-wrapper {
+          .icon-add {
+            color: hsla(0, 0%, 100%, 0.5);
+          }
+        }
+      }
+    }
+  }
+
+  .close {
+    background-color: #222;
+    color: $font-color-content;
+    height: 5rem;
+    line-height: 5rem;
+    text-align: center;
+    font-size: 1.8rem;
+  }
+}
+
+.icon-favorite {
+  color: #d93f30 !important;
+}
 
 // 切换动画
 .mini-enter-active, .mini-leave-active {
@@ -821,10 +866,13 @@ export default {
   }
 }
 
-.playlist-enter, .playlist-leave-to
-  transform translate3d(0,100%,0)
-.playlist-enter-active, .playlist-leave-active
-  transition all .4s
+.playlist-enter, .playlist-leave-to {
+  transform: translate3d(0, 100%, 0);
+}
+
+.playlist-enter-active, .playlist-leave-active {
+  transition: all 0.4s;
+}
 
 @keyframes rotate {
   0% {

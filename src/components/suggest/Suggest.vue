@@ -71,7 +71,6 @@ export default {
         if (res.code === ERR_OK) {
           this._genResult(res.data).then(result => {
             this.result = result
-            console.log(result)
           })
         }
       })
